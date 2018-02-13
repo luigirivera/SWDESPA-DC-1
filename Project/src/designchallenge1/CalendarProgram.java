@@ -141,7 +141,9 @@ public class CalendarProgram {
 				
 				int result = dialog.showConfirmDialog(null, panePanel,"Add Event", JOptionPane.OK_CANCEL_OPTION);
 				
-				if(result == JOptionPane.OK_OPTION && !eventName.getText().equals(addEventPHNameText));
+				if(result == JOptionPane.OK_OPTION && eventName.getText().equals(addEventPHNameText)) {
+					
+				}
 			}
 		});
 
