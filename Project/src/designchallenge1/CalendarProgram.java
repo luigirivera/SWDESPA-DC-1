@@ -34,6 +34,10 @@ public class CalendarProgram {
 	public JTable calendarTable;
 	public DefaultTableModel modelCalendarTable;
 
+	/**** Other Attributes ****/
+	private final static String addEventPHNameText = "Event Name";
+	private final static String addEventPHColorText = "Event Color";
+	
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
 				"October", "November", "December" };
@@ -87,7 +91,7 @@ public class CalendarProgram {
 		btnNext = new JButton(">>");
 		modelCalendarTable = new DefaultTableModel() {
 			public boolean isCellEditable(int rowIndex, int mColIndex) {
-				return true;
+				return false;
 			}
 		};
 
@@ -96,6 +100,49 @@ public class CalendarProgram {
 			public void mouseClicked(MouseEvent evt) {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
+				
+				JOptionPane dialog = new JOptionPane();
+				JTextField eventName = new JTextField();
+				JComboBox colors = new JComboBox();
+				JPanel panePanel = new JPanel();
+				
+				eventName.setForeground(Color.GRAY);
+	        	eventName.setText(addEventPHNameText);
+	        	
+				eventName.addFocusListener(new FocusListener() {
+					@Override
+					public void focusGained(FocusEvent arg0) {
+				        if (eventName.getText().equals(addEventPHNameText)) {
+				        	eventName.setText("");
+				        	eventName.setForeground(Color.BLACK);
+				        }
+						
+					}
+
+					@Override
+					public void focusLost(FocusEvent arg0) {
+				        if (eventName.getText().isEmpty()) {
+				        	eventName.setForeground(Color.GRAY);
+				        	eventName.setText(addEventPHNameText);
+				        }
+						
+					}
+					
+				});
+				
+				eventName.setPreferredSize(new Dimension(200,30));
+				
+				colors.addItem(addEventPHColorText);
+				colors.addItem("Green");
+				colors.addItem("Blue");
+				colors.addItem("Red");
+				
+				panePanel.add(eventName);
+				panePanel.add(colors);
+				
+				int result = dialog.showConfirmDialog(null, panePanel,"Add Event", JOptionPane.OK_CANCEL_OPTION);
+				
+				if(result == JOptionPane.OK_OPTION && (eventName.getText().equals(addEventPHNameText) || String.valueOf(colors.getSelectedItem()).equals(addEventPHColorText)));
 			}
 		});
 
