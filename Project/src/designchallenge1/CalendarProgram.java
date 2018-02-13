@@ -135,9 +135,6 @@ public class CalendarProgram {
 				for (CalendarColors cc : CalendarColors.values()) {
 					colors.addItem(cc);
 				}
-				/*colors.addItem("Green");
-				colors.addItem("Blue");
-				colors.addItem("Red");*/
 				
 				panePanel.add(eventName);
 				panePanel.add(colors);
