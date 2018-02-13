@@ -87,7 +87,7 @@ public class CalendarProgram {
 		btnNext = new JButton(">>");
 		modelCalendarTable = new DefaultTableModel() {
 			public boolean isCellEditable(int rowIndex, int mColIndex) {
-				return true;
+				return false;
 			}
 		};
 
@@ -96,6 +96,7 @@ public class CalendarProgram {
 			public void mouseClicked(MouseEvent evt) {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
+				//luis' note: use this for "double click to add event"
 			}
 		});
 
