@@ -36,7 +36,6 @@ public class CalendarProgram {
 
 	/**** Other Attributes ****/
 	private final static String addEventPHNameText = "Event Name";
-	private final static String addEventPHColorText = "Event Color";
 	
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -133,17 +132,19 @@ public class CalendarProgram {
 				
 				eventName.setPreferredSize(new Dimension(200,30));
 				
-				colors.addItem(addEventPHColorText);
-				colors.addItem("Green");
+				for (CalendarColors cc : CalendarColors.values()) {
+					colors.addItem(cc);
+				}
+				/*colors.addItem("Green");
 				colors.addItem("Blue");
-				colors.addItem("Red");
+				colors.addItem("Red");*/
 				
 				panePanel.add(eventName);
 				panePanel.add(colors);
 				
 				int result = dialog.showConfirmDialog(null, panePanel,"Add Event", JOptionPane.OK_CANCEL_OPTION);
 				
-				if(result == JOptionPane.OK_OPTION && (eventName.getText().equals(addEventPHNameText) || String.valueOf(colors.getSelectedItem()).equals(addEventPHColorText)));
+				if(result == JOptionPane.OK_OPTION && !eventName.getText().equals(addEventPHNameText));
 			}
 		});
 
