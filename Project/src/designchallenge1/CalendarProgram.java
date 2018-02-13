@@ -36,6 +36,8 @@ public class CalendarProgram {
 
 	/**** Other Attributes ****/
 	private final static String addEventPHNameText = "Event Name";
+	private String addEventName;
+	private CalendarColors addEventColor;
 	
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -101,6 +103,10 @@ public class CalendarProgram {
 				int row = calendarTable.getSelectedRow();
 				//luis' note: use this for "double click to add event"
 				
+				this.addEvent();
+			}
+			
+			private void addEvent() {
 				JOptionPane dialog = new JOptionPane();
 				JTextField eventName = new JTextField();
 				JComboBox colors = new JComboBox();
@@ -142,7 +148,13 @@ public class CalendarProgram {
 				int result = dialog.showConfirmDialog(null, panePanel,"Add Event", JOptionPane.OK_CANCEL_OPTION);
 				
 				if(result == JOptionPane.OK_OPTION && eventName.getText().equals(addEventPHNameText)) {
-					
+					JOptionPane.showMessageDialog(null, "Please enter an event name.", "Error", JOptionPane.ERROR_MESSAGE);
+					addEvent();
+				}
+				
+				else {
+					addEventName = String.valueOf(eventName.getText());
+					addEventColor = colors.getSelectedItem(); //this part
 				}
 			}
 		});
