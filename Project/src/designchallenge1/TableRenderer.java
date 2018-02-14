@@ -25,7 +25,7 @@ public class TableRenderer extends DefaultTableCellRenderer {
 			setBackground(Color.WHITE);
 		setBorder(null);
 		setForeground(Color.black);
-		setVerticalAlignment(SwingConstants.TOP); //added
+		setVerticalAlignment(SwingConstants.TOP); // added
 		return this;
 	}
 }

@@ -38,7 +38,7 @@ public class CalendarProgram {
 	private final static String addEventPHNameText = "Event Name";
 	private String addEventName;
 	private CalendarColors addEventColor;
-	
+
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
 				"October", "November", "December" };
@@ -101,60 +101,61 @@ public class CalendarProgram {
 			public void mouseClicked(MouseEvent evt) {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
-				//luis' note: use this for "double click to add event"
-				
+				// luis' note: use this for "double click to add event"
+
 				this.addEvent();
 			}
-			
+
 			private void addEvent() {
 				JOptionPane dialog = new JOptionPane();
 				JTextField eventName = new JTextField();
 				JComboBox colors = new JComboBox();
 				JPanel panePanel = new JPanel();
-				
+
 				eventName.setForeground(Color.GRAY);
-	        	eventName.setText(addEventPHNameText);
-	        	
+				eventName.setText(addEventPHNameText);
+
 				eventName.addFocusListener(new FocusListener() {
 					@Override
 					public void focusGained(FocusEvent arg0) {
-				        if (eventName.getText().equals(addEventPHNameText)) {
-				        	eventName.setText("");
-				        	eventName.setForeground(Color.BLACK);
-				        }
-						
+						if (eventName.getText().equals(addEventPHNameText)) {
+							eventName.setText("");
+							eventName.setForeground(Color.BLACK);
+						}
+
 					}
 
 					@Override
 					public void focusLost(FocusEvent arg0) {
-				        if (eventName.getText().isEmpty()) {
-				        	eventName.setForeground(Color.GRAY);
-				        	eventName.setText(addEventPHNameText);
-				        }
-						
+						if (eventName.getText().isEmpty()) {
+							eventName.setForeground(Color.GRAY);
+							eventName.setText(addEventPHNameText);
+						}
+
 					}
-					
+
 				});
-				
-				eventName.setPreferredSize(new Dimension(200,30));
-				
+
+				eventName.setPreferredSize(new Dimension(200, 30));
+
 				for (CalendarColors cc : CalendarColors.values()) {
 					colors.addItem(cc);
 				}
-				
+
 				panePanel.add(eventName);
 				panePanel.add(colors);
-				
-				int result = dialog.showConfirmDialog(null, panePanel,"Add Event", JOptionPane.OK_CANCEL_OPTION);
-				
-				if(result == JOptionPane.OK_OPTION && eventName.getText().equals(addEventPHNameText)) {
-					JOptionPane.showMessageDialog(null, "Please enter an event name.", "Error", JOptionPane.ERROR_MESSAGE);
+
+				int result = dialog.showConfirmDialog(null, panePanel, "Add Event", JOptionPane.OK_CANCEL_OPTION);
+
+				if (result == JOptionPane.OK_OPTION && eventName.getText().equals(addEventPHNameText)) {
+					JOptionPane.showMessageDialog(null, "Please enter an event name.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					addEvent();
 				}
-				
+
 				else {
 					addEventName = String.valueOf(eventName.getText());
-					addEventColor = colors.getSelectedItem(); //this part
+					addEventColor = (CalendarColors) colors.getSelectedItem(); // this part
 				}
 			}
 		});
