@@ -92,6 +92,11 @@ public class CalendarProgram {
 		btnNext = new JButton(">>");
 		modelCalendarTable = new DefaultTableModel() {
 			public boolean isCellEditable(int rowIndex, int mColIndex) {
+				return true;
+			}
+		};
+		modelCalendarTable = new DefaultTableModel() {
+			public boolean isCellEditable(int rowIndex, int mColIndex) {
 				return false;
 			}
 		};
