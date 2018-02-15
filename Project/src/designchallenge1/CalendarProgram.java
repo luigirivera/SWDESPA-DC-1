@@ -4,17 +4,36 @@
  */
 package designchallenge1;
 
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 /**
  *
  * @author Arturo III
  */
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 public class CalendarProgram {
 
@@ -33,11 +52,8 @@ public class CalendarProgram {
 	/**** Calendar Table Components ***/
 	public JTable calendarTable;
 	public DefaultTableModel modelCalendarTable;
-
-	/**** Other Attributes ****/
-	private final static String addEventPHNameText = "Event Name";
-	private String addEventName;
-	private CalendarColor addEventColor;
+	
+	public List<CalendarEvent> calendarEvents;
 
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -74,6 +90,8 @@ public class CalendarProgram {
 	}
 
 	public CalendarProgram() {
+		calendarEvents = new ArrayList<CalendarEvent>();
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -108,7 +126,14 @@ public class CalendarProgram {
 				int row = calendarTable.getSelectedRow();
 				// luis' note: use this for "double click to add event"
 
-				this.addEvent();
+				CalendarEvent calEvt;
+				IOEventReader er = new IOEventReader();
+				try {
+					calEvt = er.readEvent();
+					calendarEvents.add(calEvt);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 
 			private void addEvent() {
