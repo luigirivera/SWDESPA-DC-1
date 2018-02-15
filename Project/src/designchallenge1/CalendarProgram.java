@@ -115,7 +115,9 @@ public class CalendarProgram {
 				JOptionPane dialog = new JOptionPane();
 				JTextField eventName = new JTextField();
 				JComboBox colors = new JComboBox();
+				JCheckBox repeatCheck = new JCheckBox("Repeating Event?");
 				JPanel panePanel = new JPanel();
+				
 
 				eventName.setForeground(Color.GRAY);
 				eventName.setText(addEventPHNameText);
@@ -149,6 +151,7 @@ public class CalendarProgram {
 
 				panePanel.add(eventName);
 				panePanel.add(colors);
+				panePanel.add(repeatCheck);
 
 				int result = dialog.showConfirmDialog(null, panePanel, "Add Event", JOptionPane.OK_CANCEL_OPTION);
 
@@ -161,6 +164,8 @@ public class CalendarProgram {
 				else {
 					addEventName = String.valueOf(eventName.getText());
 					addEventColor = (CalendarColor) colors.getSelectedItem(); // this part
+					if(repeatCheck.isSelected()); //bool to true
+					else; //bool to false
 				}
 			}
 		});
