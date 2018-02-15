@@ -1,6 +1,6 @@
 package designchallenge1;
 
-public enum CalendarColors {
+public enum CalendarColor {
 	RED, GREEN, BLUE;
 	public String toString() {
 		switch(this) {

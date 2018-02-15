@@ -37,7 +37,7 @@ public class CalendarProgram {
 	/**** Other Attributes ****/
 	private final static String addEventPHNameText = "Event Name";
 	private String addEventName;
-	private CalendarColors addEventColor;
+	private CalendarColor addEventColor;
 
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -143,7 +143,7 @@ public class CalendarProgram {
 
 				eventName.setPreferredSize(new Dimension(200, 30));
 
-				for (CalendarColors cc : CalendarColors.values()) {
+				for (CalendarColor cc : CalendarColor.values()) {
 					colors.addItem(cc);
 				}
 
@@ -160,7 +160,7 @@ public class CalendarProgram {
 
 				else {
 					addEventName = String.valueOf(eventName.getText());
-					addEventColor = (CalendarColors) colors.getSelectedItem(); // this part
+					addEventColor = (CalendarColor) colors.getSelectedItem(); // this part
 				}
 			}
 		});
