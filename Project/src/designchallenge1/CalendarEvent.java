@@ -6,6 +6,7 @@ public class CalendarEvent {
 	private int month;
 	private int day;
 	private int year;
+	private boolean repeating;
 
 	public String getName() {
 		return name;
@@ -45,6 +46,14 @@ public class CalendarEvent {
 
 	public void setYear(int year) {
 		this.year = year;
+	}
+
+	public boolean isRepeating() {
+		return repeating;
+	}
+
+	public void setRepeating(boolean repeating) {
+		this.repeating = repeating;
 	}
 
 }
