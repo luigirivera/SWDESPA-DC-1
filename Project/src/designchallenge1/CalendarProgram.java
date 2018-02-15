@@ -107,8 +107,11 @@ public class CalendarProgram {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
 				// luis' note: use this for "double click to add event"
-
-				this.addEvent();
+				if(calendarTable.getValueAt(row, col) != null)
+					this.addEvent();
+				else
+					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 			}
 
 			private void addEvent() {
