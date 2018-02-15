@@ -70,6 +70,7 @@ public class IOEventReader extends EventReader{
 
 		if (result == JOptionPane.OK_OPTION && eventName.getText().equals(placeholderName)) {
 			JOptionPane.showMessageDialog(null, "Please enter an event name.", "Error", JOptionPane.ERROR_MESSAGE);
+			getInput();
 		}
 		else {
 			tmpEvent = new CalendarEvent();
