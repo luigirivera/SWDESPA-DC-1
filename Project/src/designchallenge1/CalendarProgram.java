@@ -91,6 +91,10 @@ public class CalendarProgram {
 
 	public CalendarProgram() {
 		calendarEvents = new ArrayList<CalendarEvent>();
+		EventReader er = new CSVEventReader("res/Philippine Holidays.csv");
+		calendarEvents.addAll(er.readEvent());
+		er = new PSVEventReader("res/DLSU Unicalendar.psv");
+		calendarEvents.addAll(er.readEvent());
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -126,16 +130,14 @@ public class CalendarProgram {
 				int row = calendarTable.getSelectedRow();
 				// luis' note: use this for "double click to add event"
 				try {
-					List<CalendarEvent> events;
 					EventReader er = new IOEventReader(monthToday, (int)calendarTable.getValueAt(row, col), yearToday);
-					events = er.readEvent();
-					calendarEvents.addAll(events);
+					calendarEvents.addAll(er.readEvent());
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				//debug
 				for (CalendarEvent ce : calendarEvents) {
-					System.out.println(ce.getName());
+					System.out.println(ce);
 				}
 			}
 		});
