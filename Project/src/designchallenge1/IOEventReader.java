@@ -66,9 +66,12 @@ public class IOEventReader extends EventReader{
 		panePanel.add(colors);
 		panePanel.add(repeatCheck);
 
+		
 		int result = dialog.showConfirmDialog(null, panePanel, "Add Event", JOptionPane.OK_CANCEL_OPTION);
-
-		if (result == JOptionPane.OK_OPTION && eventName.getText().equals(placeholderName)) {
+		
+		if(result == JOptionPane.CLOSED_OPTION || result == JOptionPane.CANCEL_OPTION);
+		
+		else if (result == JOptionPane.OK_OPTION && eventName.getText().equals(placeholderName)) {
 			JOptionPane.showMessageDialog(null, "Please enter an event name.", "Error", JOptionPane.ERROR_MESSAGE);
 			getInput();
 		}
@@ -84,6 +87,7 @@ public class IOEventReader extends EventReader{
 	}
 	
 	protected void parseInput() {
-		events.add(tmpEvent);
+		if(tmpEvent != null)
+			events.add(tmpEvent);
 	}
 }
