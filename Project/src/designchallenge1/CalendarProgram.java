@@ -16,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -53,7 +55,8 @@ public class CalendarProgram {
 	public JTable calendarTable;
 	public DefaultTableModel modelCalendarTable;
 
-	public List<CalendarEvent> calendarEvents;
+	/**** Added during the project ****/
+	private CalendarModel calendarModel;
 
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -90,11 +93,11 @@ public class CalendarProgram {
 	}
 
 	public CalendarProgram() {
-		calendarEvents = new ArrayList<CalendarEvent>();
+		calendarModel = new CalendarModel();
 		EventReader er = new CSVEventReader("res/Philippine Holidays.csv");
-		calendarEvents.addAll(er.readEvent());
+		calendarModel.addEvents(er.readEvent());
 		er = new PSVEventReader("res/DLSU Unicalendar.psv");
-		calendarEvents.addAll(er.readEvent());
+		calendarModel.addEvents(er.readEvent());
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -128,17 +131,19 @@ public class CalendarProgram {
 			public void mouseClicked(MouseEvent evt) {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
-				// luis' note: use this for "double click to add event"
+				Pattern ptn = Pattern.compile("\\d+");
 				try {
-					EventReader er = new IOEventReader(monthToday, (int)calendarTable.getValueAt(row, col), yearToday);
-					calendarEvents.addAll(er.readEvent());
+					Matcher mtc = ptn.matcher(calendarTable.getValueAt(row, col).toString());
+					if (mtc.find()) {
+						EventReader er = new IOEventReader(monthToday, Integer.valueOf(mtc.group(0)), yearToday);
+						calendarModel.addEvents(er.readEvent());
+					}
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
 				}
-				//debug
-				for (CalendarEvent ce : calendarEvents) {
-					System.out.println(ce);
-				}
+				calendarModel.printEvents();
 			}
 		});
 
