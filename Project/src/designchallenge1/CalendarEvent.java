@@ -35,7 +35,7 @@ public class CalendarEvent {
 	
 	public void setDate(int year, int month, int dayOfMonth) {
 		this.date = new GregorianCalendar.Builder().setLenient(false)
-				.setDate(year, month-1, dayOfMonth).build();
+				.setDate(year, month, dayOfMonth).build();
 	}
 
 	public boolean isRepeating() {

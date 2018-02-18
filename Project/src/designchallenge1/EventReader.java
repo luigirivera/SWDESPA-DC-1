@@ -6,7 +6,7 @@ import java.util.List;
 public abstract class EventReader {
 	protected List<CalendarEvent> events;
 	
-	public List<CalendarEvent> readEvent() {
+	public List<CalendarEvent> readEvents() {
 		events = new ArrayList<CalendarEvent>();
 		getInput();
 		parseInput();

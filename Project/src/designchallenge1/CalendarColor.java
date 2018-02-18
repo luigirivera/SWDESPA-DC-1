@@ -28,11 +28,11 @@ public enum CalendarColor {
 	public String toHex() {
 		switch (this) {
 		case RED:
-			return "#FF0000";
+			return "#DD0000";
 		case GREEN:
-			return "#00FF00";
+			return "#00DD00";
 		case BLUE:
-			return "#0000FF";
+			return "#0000DD";
 		default:
 			return "#000000";
 		}

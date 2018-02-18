@@ -87,18 +87,38 @@ public class CalendarProgram {
 			int row = new Integer((i + som - 2) / 7);
 			int column = (i + som - 2) % 7;
 			modelCalendarTable.setValueAt(i, row, column);
+			//Added lines below
+			modelCalendarTable.setValueAt(
+					"<html>" + modelCalendarTable.getValueAt(row, column).toString(), 
+					row, column);
+			refreshTile(i, row, column);
+			modelCalendarTable.setValueAt(
+					modelCalendarTable.getValueAt(row, column).toString() + "</html>",
+					row, column);
 		}
 
 		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer());
 	}
+	
+	/* Added this */
+	public void refreshCurrentPage() {
+		this.refreshCalendar(monthToday, yearToday);
+	}
+	
+	/* Added this */
+	public void refreshTile(int day, int row, int column) {
+		for (CalendarEvent ce : calendarModel.getEventsAt(yearToday, monthToday, day)) {
+			modelCalendarTable.setValueAt(
+					modelCalendarTable.getValueAt(row, column).toString()
+						+ "<br><font color=" + ce.getColor().toHex() + ">"
+						+ ce.getName() + "</font>",
+					row, column);
+		}
+	}
 
 	public CalendarProgram() {
-		calendarModel = new CalendarModel();
-		EventReader er = new CSVEventReader("res/Philippine Holidays.csv");
-		calendarModel.addEvents(er.readEvent());
-		er = new PSVEventReader("res/DLSU Unicalendar.psv");
-		calendarModel.addEvents(er.readEvent());
-
+		calendarModel = new CalendarModel(this);
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -136,13 +156,14 @@ public class CalendarProgram {
 					Matcher mtc = ptn.matcher(calendarTable.getValueAt(row, col).toString());
 					if (mtc.find()) {
 						EventReader er = new IOEventReader(monthToday, Integer.valueOf(mtc.group(0)), yearToday);
-						calendarModel.addEvents(er.readEvent());
+						calendarModel.addEvents(er.readEvents());
 					}
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
+				refreshCurrentPage();
 				calendarModel.printEvents();
 			}
 		});
@@ -204,6 +225,7 @@ public class CalendarProgram {
 			cmbYear.addItem(String.valueOf(i));
 		}
 
+		calendarModel.initEvents();
 		refreshCalendar(monthBound, yearBound); // Refresh calendar
 	}
 
