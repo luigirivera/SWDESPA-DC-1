@@ -49,7 +49,9 @@ public class CalendarModel {
 		Calendar cal = new Calendar.Builder().setDate(year, month, dayOfMonth).build();
 		List<CalendarEvent> evts = new ArrayList<CalendarEvent>();
 		for (CalendarEvent ce : events) {
-			if (ce.getDate().get(Calendar.YEAR)==year &&
+			if (year>=ce.getDate().get(Calendar.YEAR) &&
+				(ce.getDate().get(Calendar.YEAR)==year ||
+				ce.isRepeating()) &&
 				ce.getDate().get(Calendar.MONTH)==month &&
 				ce.getDate().get(Calendar.DAY_OF_MONTH)==dayOfMonth)
 				evts.add(ce);
