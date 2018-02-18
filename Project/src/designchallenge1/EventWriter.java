@@ -7,8 +7,12 @@ public abstract class EventWriter {
 	
 	public void writeEvents(List<CalendarEvent> calendarEvents) {
 		this.calendarEvents = calendarEvents;
-		setOutput();
+		getData();
+		prepareData();
+		outputData();
 	}
 	
-	protected abstract void setOutput();
+	protected abstract void getData();
+	protected abstract void prepareData();
+	protected abstract void outputData();
 }

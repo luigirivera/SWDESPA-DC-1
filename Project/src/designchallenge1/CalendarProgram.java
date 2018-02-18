@@ -165,6 +165,7 @@ public class CalendarProgram {
 				}
 				refreshCurrentPage();
 				calendarModel.printEvents();
+				calendarModel.outputEvents();
 			}
 		});
 

@@ -65,4 +65,12 @@ public class CalendarModel {
 			System.out.println(ce);
 		}
 	}
+	
+	//debug method
+	public void outputEvents() {
+		EventWriter ew = new CSVEventWriter("res/Philippine Holidays2.csv");
+		ew.writeEvents(events);
+		ew = new PSVEventWriter("res/DLSU Unicalendar2.psv");
+		ew.writeEvents(events);
+	}
 }
