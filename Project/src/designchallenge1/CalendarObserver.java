@@ -1,10 +1,5 @@
 package designchallenge1;
 
-public class CalendarObserver {
-
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
-
+public interface CalendarObserver {
+	public void update(CalendarModel model);
 }

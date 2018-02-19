@@ -1,5 +1,6 @@
 package designchallenge1;
 
+import java.awt.Color;
 import java.util.Arrays;
 
 public enum CalendarColor {
@@ -36,5 +37,9 @@ public enum CalendarColor {
 		default:
 			return "#000000";
 		}
+	}
+	
+	public Color toColor() {
+		return Color.decode(this.toHex());
 	}
 }

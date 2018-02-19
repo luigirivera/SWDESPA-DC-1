@@ -34,14 +34,14 @@ public class CalendarModel {
 	
 	public void attach(CalendarObserver obs) {
 		observers.add(obs);
-		obs.update();
+		obs.update(this);
 	}
 	
 	public void updateAll() {
 		if (view!=null)
 			view.refreshCurrentPage();
 		for (CalendarObserver co : observers) {
-			co.update();
+			co.update(this);
 		}
 	}
 	

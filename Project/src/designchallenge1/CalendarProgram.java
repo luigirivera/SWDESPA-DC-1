@@ -37,6 +37,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
+import facebook.FBView;
+import sms.SMSView;
+
 public class CalendarProgram {
 
 	/**** Day Components ****/
@@ -227,6 +230,8 @@ public class CalendarProgram {
 		}
 
 		calendarModel.initEvents();
+		calendarModel.attach(new FBAdapter(new FBView()));
+		calendarModel.attach(new SMSAdapter(new SMSView()));
 		refreshCalendar(monthBound, yearBound); // Refresh calendar
 	}
 
