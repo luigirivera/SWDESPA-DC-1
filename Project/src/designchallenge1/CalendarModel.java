@@ -3,16 +3,21 @@ package designchallenge1;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class CalendarModel {
 	private List<CalendarEvent> events;
 	private List<CalendarObserver> observers;
 	private CalendarProgram view;
+	private Timer timer;
 	
 	public CalendarModel(CalendarProgram view) {
 		events = new ArrayList<CalendarEvent>();
 		observers = new ArrayList<CalendarObserver>();
 		this.view = view;
+		timer = new Timer();
 	}
 	
 	public void initEvents() {
@@ -24,24 +29,48 @@ public class CalendarModel {
 	
 	public void addEvent(CalendarEvent evt) {
 		events.add(evt);
-		updateAll();
+		scheduleEventNotification(evt);
+		updateView();
 	}
 	
 	public void addEvents(List<CalendarEvent> evts) {
 		events.addAll(evts);
-		updateAll();
+		for(CalendarEvent evt : evts) {
+			scheduleEventNotification(evt);
+		}
+		updateView();
 	}
 	
 	public void attach(CalendarObserver obs) {
 		observers.add(obs);
-		obs.update(this);
 	}
 	
-	public void updateAll() {
+	public void updateView() {
 		if (view!=null)
 			view.refreshCurrentPage();
+	}
+	
+	public void updateObservers(CalendarEvent evt) {
 		for (CalendarObserver co : observers) {
-			co.update(this);
+			co.update(evt);
+		}
+	}
+	
+	public void scheduleEventNotification(CalendarEvent evt) {
+		if (evt.getDate().after(Calendar.getInstance())) {
+			if(evt.isRepeating()) {
+				timer.scheduleAtFixedRate(new TimerTask() {
+					public void run() {
+						updateObservers(evt);
+					}
+				}, evt.getDate().getTime(), TimeUnit.DAYS.toMillis(365));
+			}else {
+				timer.schedule(new TimerTask() {
+					public void run() {
+						updateObservers(evt);
+					}
+				}, evt.getDate().getTime());
+			}
 		}
 	}
 	

@@ -1,5 +1,5 @@
 package designchallenge1;
 
 public interface CalendarObserver {
-	public void update(CalendarModel model);
+	public void update(CalendarEvent evt);
 }

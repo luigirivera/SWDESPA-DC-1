@@ -159,15 +159,17 @@ public class CalendarProgram {
 					Matcher mtc = ptn.matcher(calendarTable.getValueAt(row, col).toString());
 					if (mtc.find()) {
 						EventReader er = new IOEventReader(monthToday, Integer.valueOf(mtc.group(0)), yearToday);
-						calendarModel.addEvents(er.readEvents());
+						List<CalendarEvent> cevts = er.readEvents();
+						if(cevts.size()>0)
+							calendarModel.addEvents(cevts);
 					}
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
-				refreshCurrentPage();
-				calendarModel.printEvents();
+				//refreshCurrentPage(); probably don't need this if we're updating from model
+				calendarModel.printEvents(); //debug?
 				calendarModel.outputEvents();
 			}
 		});
