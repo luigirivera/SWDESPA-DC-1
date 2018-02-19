@@ -41,7 +41,7 @@ public abstract class SVEventWriter extends EventWriter{
 	protected void prepareData() {
 		List<String> temp = new ArrayList<String>();
 		for(List<String> event : events) {
-			System.out.println(event);
+			System.out.println(event + " prepared");
 			temp.addAll(event);
 			event.set(dateIndex, temp.get(0));
 			event.set(nameIndex, temp.get(1));
