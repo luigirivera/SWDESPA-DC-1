@@ -5,40 +5,75 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class CalendarModel {
 	private List<CalendarEvent> events;
+	private List<CalendarEvent> pendingEvents;
 	private List<CalendarObserver> observers;
 	private CalendarProgram view;
-	private Timer timer;
+	private ScheduledExecutorService ses;
 	
 	public CalendarModel(CalendarProgram view) {
 		events = new ArrayList<CalendarEvent>();
+		pendingEvents = new ArrayList<CalendarEvent>();
 		observers = new ArrayList<CalendarObserver>();
 		this.view = view;
-		timer = new Timer();
+		ses = Executors.newScheduledThreadPool(1);
+		notifChecker();
 	}
 	
-	public void initEvents() {
-		EventReader er = new CSVEventReader("res/Philippine Holidays.csv");
-		this.addEvents(er.readEvents());
-		er = new PSVEventReader("res/DLSU Unicalendar.psv");
-		this.addEvents(er.readEvents());
+	public void notifChecker() {
+		ses.scheduleAtFixedRate(new Runnable() {
+			private int currYear = Calendar.getInstance().get(Calendar.YEAR);
+			public void run() {
+				System.out.println(Calendar.getInstance().get(Calendar.YEAR));
+				System.out.println(currYear);
+				if(Calendar.getInstance().get(Calendar.YEAR)!=currYear) {
+					System.out.println("Went here");
+					currYear = Calendar.getInstance().get(Calendar.YEAR);
+					for (CalendarEvent evt : events) {
+						if (evt.isRepeating() && currYear>=evt.getDate().get(Calendar.YEAR)) {
+							CalendarEvent clone = (CalendarEvent)evt.clone();
+							clone.getDate().set(Calendar.YEAR, currYear);
+							scheduleEvent(clone);
+						}
+					}
+				}
+				List<CalendarEvent> toRemove = new ArrayList<CalendarEvent>();
+				for (CalendarEvent evt : pendingEvents) {
+					if (evt.isToday()) {
+						updateObservers(evt);
+						toRemove.add(evt);
+					}
+				}
+				for (CalendarEvent evt : toRemove)
+					finishEvent(evt);
+			}
+		}, 0	, 1, TimeUnit.SECONDS);
 	}
 	
 	public void addEvent(CalendarEvent evt) {
 		events.add(evt);
-		scheduleEventNotification(evt);
+		scheduleEvent(evt);
 		updateView();
 	}
 	
 	public void addEvents(List<CalendarEvent> evts) {
-		events.addAll(evts);
 		for(CalendarEvent evt : evts) {
-			scheduleEventNotification(evt);
+			addEvent(evt);
 		}
-		updateView();
+	}
+	
+	private void scheduleEvent(CalendarEvent evt) {
+		if(!pendingEvents.contains(evt))
+			pendingEvents.add(evt);
+	}
+	
+	private void finishEvent(CalendarEvent evt) {
+		pendingEvents.remove(evt);
 	}
 	
 	public void attach(CalendarObserver obs) {
@@ -56,36 +91,18 @@ public class CalendarModel {
 		}
 	}
 	
-	public void scheduleEventNotification(CalendarEvent evt) {
-		if (evt.getDate().after(Calendar.getInstance())) {
-			if(evt.isRepeating()) {
-				timer.scheduleAtFixedRate(new TimerTask() {
-					public void run() {
-						updateObservers(evt);
-					}
-				}, evt.getDate().getTime(), TimeUnit.DAYS.toMillis(365));
-			}else {
-				timer.schedule(new TimerTask() {
-					public void run() {
-						updateObservers(evt);
-					}
-				}, evt.getDate().getTime());
-			}
+	public List<CalendarEvent> getEventsAt(Calendar calendar) {
+		List<CalendarEvent> eventsAt = new ArrayList<CalendarEvent>();
+		for (CalendarEvent ce : events) {
+			if(ce.isAt(calendar))
+				eventsAt.add(ce);
 		}
+		return eventsAt;
 	}
 	
 	public List<CalendarEvent> getEventsAt(int year, int month, int dayOfMonth){
-		Calendar cal = new Calendar.Builder().setDate(year, month, dayOfMonth).build();
-		List<CalendarEvent> evts = new ArrayList<CalendarEvent>();
-		for (CalendarEvent ce : events) {
-			if (year>=ce.getDate().get(Calendar.YEAR) &&
-				(ce.getDate().get(Calendar.YEAR)==year ||
-				ce.isRepeating()) &&
-				ce.getDate().get(Calendar.MONTH)==month &&
-				ce.getDate().get(Calendar.DAY_OF_MONTH)==dayOfMonth)
-				evts.add(ce);
-		}
-		return evts;
+		Calendar calendar = new Calendar.Builder().setLenient(false).setDate(year, month, dayOfMonth).build();
+		return getEventsAt(calendar);
 	}
 	
 	//debug method
@@ -93,6 +110,13 @@ public class CalendarModel {
 		for (CalendarEvent ce : events) {
 			System.out.println(ce);
 		}
+	}
+	
+	public void initEvents() {
+		EventReader er = new CSVEventReader("res/Philippine Holidays.csv");
+		this.addEvents(er.readEvents());
+		er = new PSVEventReader("res/DLSU Unicalendar.psv");
+		this.addEvents(er.readEvents());
 	}
 	
 	//debug method
