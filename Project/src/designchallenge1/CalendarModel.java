@@ -118,9 +118,9 @@ public class CalendarModel {
 	
 	//debug method
 	public void outputEvents() {
-		EventWriter ew = new CSVEventWriter("res/Philippine Holidays2.csv");
+		EventWriter ew = new CSVEventWriter("res/Philippine Holidays.csv");
 		ew.writeEvents(events);
-		ew = new PSVEventWriter("res/DLSU Unicalendar2.psv");
+		ew = new PSVEventWriter("res/DLSU Unicalendar.psv");
 		ew.writeEvents(events);
 	}
 }
