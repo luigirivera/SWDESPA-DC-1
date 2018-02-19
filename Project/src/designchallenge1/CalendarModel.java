@@ -29,10 +29,7 @@ public class CalendarModel {
 		ses.scheduleAtFixedRate(new Runnable() {
 			private int currYear = Calendar.getInstance().get(Calendar.YEAR);
 			public void run() {
-				System.out.println(Calendar.getInstance().get(Calendar.YEAR));
-				System.out.println(currYear);
 				if(Calendar.getInstance().get(Calendar.YEAR)!=currYear) {
-					System.out.println("Went here");
 					currYear = Calendar.getInstance().get(Calendar.YEAR);
 					for (CalendarEvent evt : events) {
 						if (evt.isRepeating() && currYear>=evt.getDate().get(Calendar.YEAR)) {

@@ -168,8 +168,6 @@ public class CalendarProgram {
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
-				//refreshCurrentPage(); probably don't need this if we're updating from model
-				calendarModel.printEvents(); //debug?
 				calendarModel.outputEvents();
 			}
 		});
