@@ -91,17 +91,11 @@ public class CalendarProgram {
 			int column = (i + som - 2) % 7;
 			modelCalendarTable.setValueAt(i, row, column);
 			//Added lines below
-			modelCalendarTable.setValueAt(
-					"<html>" + modelCalendarTable.getValueAt(row, column).toString(), 
-					row, column);
 			try {
-				refreshTile(i, row, column);
+				refreshTileEvents(i, row, column);
 			} catch (NullPointerException e) {
 				System.out.println("No CalendarModel yet");
 			}
-			modelCalendarTable.setValueAt(
-					modelCalendarTable.getValueAt(row, column).toString() + "</html>",
-					row, column);
 		}
 
 		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer());
@@ -113,14 +107,15 @@ public class CalendarProgram {
 	}
 	
 	/* Added this */
-	public void refreshTile(int day, int row, int column) {
-		for (CalendarEvent ce : calendarModel.getEventsAt(yearToday, monthToday, day)) {
-			modelCalendarTable.setValueAt(
-					modelCalendarTable.getValueAt(row, column).toString()
-						+ "<br><font color=" + ce.getColor().toHex() + ">"
-						+ ce.getName() + "</font>",
-					row, column);
-		}
+	public void refreshTileEvents(int day, int row, int column) throws NullPointerException{
+		HTMLEventStringFormatter formatter = new HTMLEventStringFormatter();
+		String tmp = "";
+		tmp += HTMLEventStringFormatter.HTMLSTART;
+		tmp += modelCalendarTable.getValueAt(row, column).toString();
+		tmp += "<br>";
+		tmp += formatter.formatEvents(calendarModel.getEventsAt(yearToday, monthToday, day));
+		tmp += HTMLEventStringFormatter.HTMLEND;
+		modelCalendarTable.setValueAt(tmp, row, column);
 	}
 
 	public CalendarProgram() {
