@@ -2,9 +2,8 @@ package designchallenge1;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,46 +12,56 @@ public class CalendarModel {
 	private List<CalendarEvent> events;
 	private List<CalendarEvent> pendingEvents;
 	private List<CalendarObserver> observers;
+	private NotificationTracker notificationTracker;
 	private CalendarProgram view;
-	private ScheduledExecutorService ses;
 	
 	public CalendarModel() {
 		events = new ArrayList<CalendarEvent>();
 		pendingEvents = new ArrayList<CalendarEvent>();
 		observers = new ArrayList<CalendarObserver>();
-		ses = Executors.newScheduledThreadPool(1);
-		notifChecker();
+		notificationTracker = new NotificationTracker();
+		notificationTracker.start();
 	}
 	
 	public void setView(CalendarProgram view) {
 		this.view = view;
 	}
 	
-	public void notifChecker() {
-		ses.scheduleAtFixedRate(new Runnable() {
-			private int currYear = Calendar.getInstance().get(Calendar.YEAR);
-			public void run() {
-				if(Calendar.getInstance().get(Calendar.YEAR)!=currYear) {
-					currYear = Calendar.getInstance().get(Calendar.YEAR);
-					for (CalendarEvent evt : events) {
-						if (evt.isRepeating() && currYear>=evt.getDate().get(Calendar.YEAR)) {
-							CalendarEvent clone = (CalendarEvent)evt.clone();
-							clone.getDate().set(Calendar.YEAR, currYear);
-							scheduleEvent(clone);
+	class NotificationTracker{
+		private ScheduledExecutorService ses;
+		private int currYear;
+		
+		NotificationTracker() {
+			ses = Executors.newScheduledThreadPool(1);
+			currYear = GregorianCalendar.getInstance().get(Calendar.YEAR);
+			this.start();
+		}
+		
+		public void start() {
+			ses.scheduleAtFixedRate(new Runnable() {
+				public void run() {
+					if(Calendar.getInstance().get(Calendar.YEAR)!=currYear) {
+						currYear = Calendar.getInstance().get(Calendar.YEAR);
+						for (CalendarEvent evt : events) {
+							if (evt.isRepeating() && currYear>=evt.getDate().get(Calendar.YEAR)) {
+								CalendarEvent clone = (CalendarEvent)evt.clone();
+								clone.getDate().set(Calendar.YEAR, currYear);
+								scheduleEvent(clone);
+							}
 						}
 					}
-				}
-				List<CalendarEvent> toRemove = new ArrayList<CalendarEvent>();
-				for (CalendarEvent evt : pendingEvents) {
-					if (evt.isToday()) {
-						updateObservers(evt);
-						toRemove.add(evt);
+					List<CalendarEvent> toRemove = new ArrayList<CalendarEvent>();
+					for (CalendarEvent evt : pendingEvents) {
+						if (evt.isToday()) {
+							updateObservers(evt);
+							toRemove.add(evt);
+						}
 					}
+					for (CalendarEvent evt : toRemove)
+						finishEvent(evt);
 				}
-				for (CalendarEvent evt : toRemove)
-					finishEvent(evt);
-			}
-		}, 0	, 1, TimeUnit.SECONDS);
+			}, 0	, 1, TimeUnit.SECONDS);
+		}
 	}
 	
 	public void addEvent(CalendarEvent evt) {
@@ -119,7 +128,6 @@ public class CalendarModel {
 		this.addEvents(er.readEvents());
 	}
 	
-	//debug method
 	public void outputEvents() {
 		EventWriter ew = new CSVEventWriter("res/Philippine Holidays.csv");
 		ew.writeEvents(events);
