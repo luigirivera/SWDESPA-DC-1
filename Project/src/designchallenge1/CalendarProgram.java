@@ -42,6 +42,7 @@ public class CalendarProgram {
 
 	/**** Added during the project ****/
 	private CalendarModel calendarModel;
+	private CellDataHolder validCells;
 
 	public void refreshCalendar(int month, int year) {
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -68,11 +69,15 @@ public class CalendarProgram {
 		nod = cal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 		som = cal.get(GregorianCalendar.DAY_OF_WEEK);
 
+		// Added this
+		validCells.getList().clear();
+
 		for (i = 1; i <= nod; i++) {
 			int row = new Integer((i + som - 2) / 7);
 			int column = (i + som - 2) % 7;
 			modelCalendarTable.setValueAt(i, row, column);
-			//Added lines below
+			// Added lines below
+			validCells.getList().add(new CellData(i, row, column));
 			try {
 				refreshTileEvents(i, row, column);
 			} catch (NullPointerException e) {
@@ -82,20 +87,19 @@ public class CalendarProgram {
 
 		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer());
 	}
-	
+
 	/* Added this */
 	public void refreshCurrentPage() {
 		this.refreshCalendar(monthToday, yearToday);
 	}
-	
+
 	/* Added this */
-	public void refreshTileEvents(int day, int row, int column) throws NullPointerException{
+	public void refreshTileEvents(int day, int row, int column) throws NullPointerException {
 		EventStringFormatter esformatter = new HTMLEventStringFormatter();
 		CellStringFormatter csformatter = new HTMLCellStringFormatter();
-		
-		modelCalendarTable.setValueAt(
-				csformatter.format(day, esformatter.formatEvents(calendarModel.getEventsAt(yearToday, monthToday, day))), 
-				row, column);
+
+		modelCalendarTable.setValueAt(csformatter.format(day,
+				esformatter.formatEvents(calendarModel.getEventsAt(yearToday, monthToday, day))), row, column);
 	}
 
 	public CalendarProgram() {
@@ -103,6 +107,9 @@ public class CalendarProgram {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 		}
+		
+		//Added this
+		validCells = new CellDataHolder();
 
 		frmMain = new JFrame("Calendar Application");
 		frmMain.setSize(660, 750);
@@ -131,24 +138,35 @@ public class CalendarProgram {
 			public void mouseClicked(MouseEvent evt) {
 				int col = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
-				Pattern ptn = Pattern.compile("\\d+");
+				/*Pattern ptn = Pattern.compile("\\d+");
 				try {
 					Matcher mtc = ptn.matcher(calendarTable.getValueAt(row, col).toString());
 					if (mtc.find()) {
 						EventReader er = new IOEventReader(monthToday, Integer.valueOf(mtc.group(0)), yearToday);
 						List<CalendarEvent> cevts = er.readEvents();
-						if(cevts.size()>0) {
+						if (cevts.size() > 0) {
 							calendarModel.addEvents(cevts);
 							calendarModel.outputEvents();
 						}
 					}
 				} catch (NullPointerException e) {
-					if (calendarModel==null)
+					if (calendarModel == null)
 						System.out.println("No CalendarModel yet");
 					else
 						JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
+				}*/
+				try {
+					int day = validCells.getDayAtCell(row, col);
+					EventReader er = new IOEventReader(monthToday, day, yearToday);
+					List<CalendarEvent> cevts = er.readEvents();
+					if (cevts.size()>0) {
+						calendarModel.addEvents(cevts);
+						calendarModel.outputEvents();
+					}
+				} catch (IllegalArgumentException e) {
+					System.out.println(e.getMessage());
 				}
 			}
 		});
@@ -209,13 +227,84 @@ public class CalendarProgram {
 		for (int i = yearBound - 100; i <= yearBound + 100; i++) {
 			cmbYear.addItem(String.valueOf(i));
 		}
-
+		
 		refreshCalendar(monthBound, yearBound); // Refresh calendar
 	}
-	
+
 	public void setCalendarModel(CalendarModel calendarModel) {
 		this.calendarModel = calendarModel;
 		refreshCurrentPage();
+	}
+
+	class CellDataHolder {
+		private List<CellData> list;
+
+		CellDataHolder() {
+			list = new ArrayList<CellData>();
+		}
+
+		public List<CellData> getList() {
+			return list;
+		}
+		
+		public int getDayAtCell(int row, int col) throws IllegalArgumentException {
+			for (CellData cd : list) {
+				if(cd.isAt(row, col))
+					return cd.getDay();
+			}
+			throw new IllegalArgumentException("Invalid coordinates");
+		}
+
+	}
+
+	class CellData {
+		private int day;
+		private int row;
+		private int col;
+
+		CellData(int day, int row, int col) {
+			this.day = day;
+			this.row = row;
+			this.col = col;
+		}
+
+		public int getDay() {
+			return day;
+		}
+
+		public void setDay(int day) {
+			this.day = day;
+		}
+
+		public int getRow() {
+			return row;
+		}
+
+		public void setRow(int row) {
+			this.row = row;
+		}
+
+		public int getCol() {
+			return col;
+		}
+
+		public void setCol(int col) {
+			this.col = col;
+		}
+		
+		public boolean isAt(int row, int col) {
+			return this.row==row && this.col==col;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof CellData)
+				return this.day == ((CellData) o).getDay() && this.row == ((CellData) o).getRow()
+						&& this.col == ((CellData) o).getCol();
+			else
+				return false;
+		}
+
 	}
 
 	class btnPrev_Action implements ActionListener {
