@@ -16,13 +16,16 @@ public class CalendarModel {
 	private CalendarProgram view;
 	private ScheduledExecutorService ses;
 	
-	public CalendarModel(CalendarProgram view) {
+	public CalendarModel() {
 		events = new ArrayList<CalendarEvent>();
 		pendingEvents = new ArrayList<CalendarEvent>();
 		observers = new ArrayList<CalendarObserver>();
-		this.view = view;
 		ses = Executors.newScheduledThreadPool(1);
 		notifChecker();
+	}
+	
+	public void setView(CalendarProgram view) {
+		this.view = view;
 	}
 	
 	public void notifChecker() {

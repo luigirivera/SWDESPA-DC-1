@@ -94,7 +94,11 @@ public class CalendarProgram {
 			modelCalendarTable.setValueAt(
 					"<html>" + modelCalendarTable.getValueAt(row, column).toString(), 
 					row, column);
-			refreshTile(i, row, column);
+			try {
+				refreshTile(i, row, column);
+			} catch (NullPointerException e) {
+				System.out.println("No CalendarModel yet");
+			}
 			modelCalendarTable.setValueAt(
 					modelCalendarTable.getValueAt(row, column).toString() + "</html>",
 					row, column);
@@ -120,8 +124,6 @@ public class CalendarProgram {
 	}
 
 	public CalendarProgram() {
-		calendarModel = new CalendarModel(this);
-		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -160,15 +162,19 @@ public class CalendarProgram {
 					if (mtc.find()) {
 						EventReader er = new IOEventReader(monthToday, Integer.valueOf(mtc.group(0)), yearToday);
 						List<CalendarEvent> cevts = er.readEvents();
-						if(cevts.size()>0)
+						if(cevts.size()>0) {
 							calendarModel.addEvents(cevts);
+							calendarModel.outputEvents();
+						}
 					}
 				} catch (NullPointerException e) {
-					JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
+					if (calendarModel==null)
+						System.out.println("No CalendarModel yet");
+					else
+						JOptionPane.showMessageDialog(null, "Invalid Day.", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
-				calendarModel.outputEvents();
 			}
 		});
 
@@ -229,10 +235,12 @@ public class CalendarProgram {
 			cmbYear.addItem(String.valueOf(i));
 		}
 
-		calendarModel.initEvents();
-		calendarModel.attach(new FBAdapter(new FBView()));
-		calendarModel.attach(new SMSAdapter(new SMSView()));
 		refreshCalendar(monthBound, yearBound); // Refresh calendar
+	}
+	
+	public void setCalendarModel(CalendarModel calendarModel) {
+		this.calendarModel = calendarModel;
+		refreshCurrentPage();
 	}
 
 	class btnPrev_Action implements ActionListener {
