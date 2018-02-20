@@ -20,11 +20,11 @@ public class DesignChallenge1 {
 	public static void main(String[] args) {
 		// TODO code application logic here
 		CalendarModel cm = new CalendarModel();
-		cm.initEvents();
 		cm.attach(new FBAdapter(new FBView()));
 		cm.attach(new SMSAdapter(new SMSView()));
 		CalendarProgram cp = new CalendarProgram();
 		cm.setView(cp);
 		cp.setCalendarModel(cm);
+		cm.initEvents();
 	}
 }
